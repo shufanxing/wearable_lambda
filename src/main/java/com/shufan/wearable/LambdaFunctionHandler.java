@@ -5,12 +5,10 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.SQLException;
 import java.io.BufferedReader;
-import java.io.Writer;
-import java.text.ParseException;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Map;
 
 import javax.ws.rs.core.Response;
 
@@ -18,19 +16,29 @@ import com.amazonaws.services.lambda.runtime.RequestStreamHandler;
 import com.shufan.resource.StepCountResource;
 import com.amazonaws.services.lambda.runtime.Context;
 import com.amazonaws.services.lambda.runtime.LambdaLogger;
-import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
-import com.amazonaws.services.lambda.runtime.Context;
-import com.amazonaws.services.lambda.runtime.RequestStreamHandler;
-
 
 
 public class LambdaFunctionHandler implements RequestStreamHandler {
 	JSONParser parser = new JSONParser();
+	
+	private static Connection getConnection() throws SQLException, ClassNotFoundException {
+		Class.forName("org.postgresql.Driver");
+		return DriverManager.getConnection(
+				"jdbc:postgresql://wdpostgredb.cm4pdwx2jgw0.us-west-2.rds.amazonaws.com:5432/root", 
+				"root", 
+				"12345678");
+	}
+	
+//	Connection conn = null;
+//		{
+//		try {
+//			conn = getConnection();
+//		}catch (Exception e) {
+//			e.printStackTrace();
+//		}
+//	}
 
 	@Override
 	public void handleRequest(InputStream inputStream, OutputStream outputStream, Context context) throws IOException {
@@ -47,9 +55,7 @@ public class LambdaFunctionHandler implements RequestStreamHandler {
 			String httpMethod = null;
 			String proxy = null;
 			JSONObject event = (JSONObject) parser.parse(reader);
-			
-			logger.log("reader: " + event.toJSONString());
-			
+						
 			if(event.get("httpMethod") != null) {
 				httpMethod = (String) event.get("httpMethod");
 			}
@@ -75,7 +81,10 @@ public class LambdaFunctionHandler implements RequestStreamHandler {
 				}
 				
 				params = proxy.split("\\/");
-				if(params.length==4) {
+				if(params.length==1 && params[0]=="deleteAll") {
+					
+					output = StepCountResource.deleteAll();
+				}else if(params.length==4) {
 //					{userID}/{day}/{timeInterval}/{stepCount}
 					int userID = Integer.valueOf(params[0]);
 					int day = Integer.valueOf(params[1]);
@@ -104,15 +113,38 @@ public class LambdaFunctionHandler implements RequestStreamHandler {
 				switch(params[0]) {
 				case "current":
 					//"current/{userID}"
+					if(params.length==2) {
+						int userID = Integer.valueOf(params[1]);
+						output = StepCountResource.getCurrent(userID);
+					}else {
+						throw new Exception("wrong getCurrent pathParameters: " + proxy);
+					}
 					
 					break;
 				case "single":
 					//("single/{userID}/{day}")
+					if(params.length==3) {
+						int userID = Integer.valueOf(params[1]);
+						int day = Integer.valueOf(params[2]);
+						
+						output = StepCountResource.getSingle(userID, day);
+					}else {
+						throw new Exception("wrong getSingle pathParameters: " + proxy);
+					}
+					
 					break;
 				case "range":
 					//"range/{userID}/{startDay}/{numDays}"
-					break;
-				case "deleteAll":
+					if(params.length == 4) {
+						int userID = Integer.valueOf(params[1]);
+						int startDay = Integer.valueOf(params[2]);
+						int numDays = Integer.valueOf(params[3]);
+						
+						output = StepCountResource.getRange(userID, startDay, numDays);
+						
+					}else {
+						throw new Exception("wrong getRange pathParameters: " + proxy);
+					}
 					break;
 				default:
 					throw new Exception("unsupport GET pathParameter: " + proxy);
@@ -129,7 +161,7 @@ public class LambdaFunctionHandler implements RequestStreamHandler {
 		}
 		
 		JSONObject responseBody = new JSONObject();
-		responseBody.put("message",  output);
+		responseBody.put("message",  output.getEntity().toString());
 
 		responseJson.put("isBase64Encoded", false);
 		responseJson.put("statusCode", "200");

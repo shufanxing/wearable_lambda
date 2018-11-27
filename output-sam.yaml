@@ -1,0 +1,26 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Description: AWS Serverless Jersey API - com.shufan::wearable-servlerless
+Outputs:
+  WearableLambdaApi11251000:
+    Description: URL for application
+    Export:
+      Name: WearableLambdaApi11261000
+    Value:
+      Fn::Sub: https://${ServerlessRestApi}.execute-api.${AWS::Region}.amazonaws.com/Prod/
+Resources:
+  WearableLambdaFunction:
+    Properties:
+      CodeUri: s3://wearable-serverless/4237be399645754aede0b9fcb5c4f387
+      Events:
+        GetResource:
+          Properties:
+            Method: any
+            Path: /{proxy+}
+          Type: Api
+      Handler: com.shufan.wearable.LambdaFunctionHandler::handleRequest
+      MemorySize: 1024
+      Policies: AWSLambdaBasicExecutionRole
+      Runtime: java8
+      Timeout: 30
+    Type: AWS::Serverless::Function
+Transform: AWS::Serverless-2016-10-31

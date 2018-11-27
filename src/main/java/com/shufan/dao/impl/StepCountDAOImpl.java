@@ -26,19 +26,9 @@ public class StepCountDAOImpl {
 				"root", 
 				"12345678");
 	}
-	
-	private static Connection conn = null;
-	
-	{
-		try {
-			conn = getConnection();
-		}catch (Exception e) {
-			e.printStackTrace();
-		}
-	}
-
-	public static Response postStepCount(StepCount stepCount)  {
 		
+	
+	public static Response postStepCount(StepCount stepCount)  {
 		
 		Connection conn = null;
 		PreparedStatement ps = null;
@@ -48,7 +38,9 @@ public class StepCountDAOImpl {
 
 		try {
 			
-			conn = getConnection();
+			if(conn==null) {
+				conn = getConnection();
+			}
 
 			ps = conn.prepareStatement(sql);
 			ps.setInt(1, stepCount.getUserId());
@@ -65,7 +57,7 @@ public class StepCountDAOImpl {
 				statusMessage.setMessage("Unable to create step_count...");
 				return Response.status(404).entity(statusMessage).build();
 			}
-
+			
 			ps.close();
 			ps = null;
 			conn.close(); // Return to connection pool
@@ -109,8 +101,10 @@ public class StepCountDAOImpl {
 
 		try {
 			
-			conn = getConnection();
-
+			if(conn==null) {
+				conn = getConnection();
+			}
+			
 			ps = conn.prepareStatement(sql);
 			ps.setInt(1, userId);
 			rs = ps.executeQuery();
@@ -124,8 +118,7 @@ public class StepCountDAOImpl {
 				statusMessage.setMessage(String.format("Customer with ID of %d is not found.", userId));
 				return Response.status(404).entity(statusMessage).build();
 			}
-
-
+			
 			ps2 = conn.prepareStatement(sql2);
 			ps2.setInt(1, userId);
 			ps2.setInt(2, current);
@@ -219,7 +212,9 @@ public class StepCountDAOImpl {
 
 		try {
 			
-			conn = getConnection();
+			if(conn==null) {
+				conn = getConnection();
+			}
 
 			ps = conn.prepareStatement(sql);
 			ps.setInt(1, userId);
@@ -287,7 +282,9 @@ public class StepCountDAOImpl {
 
 		try {
 			
-			conn = getConnection();
+			if(conn==null) {
+				conn = getConnection();
+			}
 
 			ps = conn.prepareStatement(sql);
 			ps.setInt(1, userId);
@@ -356,7 +353,9 @@ public class StepCountDAOImpl {
 
 		try {
 			
-			conn = getConnection();
+			if(conn==null) {
+				conn = getConnection();
+			}
 
 			ps = conn.prepareStatement(sql);
 

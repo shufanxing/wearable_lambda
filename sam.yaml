@@ -18,8 +18,8 @@ Resources:
             Path: /{proxy+}
             Method: any
 Outputs:
-  WearableLambdaApi11251045:
+  WearableLambdaApi11251000:
     Description: URL for application
     Value: !Sub 'https://${ServerlessRestApi}.execute-api.${AWS::Region}.amazonaws.com/Prod/'
     Export:
-      Name: WearableLambdaApi11251045
+      Name: WearableLambdaApi11261000
