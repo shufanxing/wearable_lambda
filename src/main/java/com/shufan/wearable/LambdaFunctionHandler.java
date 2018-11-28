@@ -31,20 +31,19 @@ public class LambdaFunctionHandler implements RequestStreamHandler {
 				"12345678");
 	}
 	
-//	Connection conn = null;
-//		{
-//		try {
-//			conn = getConnection();
-//		}catch (Exception e) {
-//			e.printStackTrace();
-//		}
-//	}
+	Connection conn = null;
+		{
+		try {
+			conn = getConnection();
+		}catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
 
 	@Override
 	public void handleRequest(InputStream inputStream, OutputStream outputStream, Context context) throws IOException {
-		LambdaLogger logger = context.getLogger();
-		logger.log("Loading Java Lambda handler of ProxyWithStream");
-
+//		LambdaLogger logger = context.getLogger();
+		
 		BufferedReader reader = new BufferedReader(new InputStreamReader(inputStream));
 		
 		JSONObject responseJson = new JSONObject();
@@ -55,7 +54,7 @@ public class LambdaFunctionHandler implements RequestStreamHandler {
 			String httpMethod = null;
 			String proxy = null;
 			JSONObject event = (JSONObject) parser.parse(reader);
-						
+									
 			if(event.get("httpMethod") != null) {
 				httpMethod = (String) event.get("httpMethod");
 			}
@@ -79,11 +78,9 @@ public class LambdaFunctionHandler implements RequestStreamHandler {
 						throw new Exception("empty POST proxy");
 					}
 				}
-				
 				params = proxy.split("\\/");
-				if(params.length==1 && params[0]=="deleteAll") {
-					
-					output = StepCountResource.deleteAll();
+				if(params.length==1 && params[0].equals("deleteAll")) {
+					output = StepCountResource.deleteAll(conn);
 				}else if(params.length==4) {
 //					{userID}/{day}/{timeInterval}/{stepCount}
 					int userID = Integer.valueOf(params[0]);
@@ -91,7 +88,7 @@ public class LambdaFunctionHandler implements RequestStreamHandler {
 					int timeInterval = Integer.valueOf(params[2]);
 					int stepCount = Integer.valueOf(params[3]);
 					
-					output = StepCountResource.postStepCount(userID, day, timeInterval, stepCount);
+					output = StepCountResource.postStepCount(conn, userID, day, timeInterval, stepCount);
 					
 				}else {
 					throw new Exception("wrong POST pathParameters: " + proxy);
@@ -115,7 +112,7 @@ public class LambdaFunctionHandler implements RequestStreamHandler {
 					//"current/{userID}"
 					if(params.length==2) {
 						int userID = Integer.valueOf(params[1]);
-						output = StepCountResource.getCurrent(userID);
+						output = StepCountResource.getCurrent(conn, userID);
 					}else {
 						throw new Exception("wrong getCurrent pathParameters: " + proxy);
 					}
@@ -127,7 +124,7 @@ public class LambdaFunctionHandler implements RequestStreamHandler {
 						int userID = Integer.valueOf(params[1]);
 						int day = Integer.valueOf(params[2]);
 						
-						output = StepCountResource.getSingle(userID, day);
+						output = StepCountResource.getSingle(conn, userID, day);
 					}else {
 						throw new Exception("wrong getSingle pathParameters: " + proxy);
 					}
@@ -140,7 +137,7 @@ public class LambdaFunctionHandler implements RequestStreamHandler {
 						int startDay = Integer.valueOf(params[2]);
 						int numDays = Integer.valueOf(params[3]);
 						
-						output = StepCountResource.getRange(userID, startDay, numDays);
+						output = StepCountResource.getRange(conn, userID, startDay, numDays);
 						
 					}else {
 						throw new Exception("wrong getRange pathParameters: " + proxy);

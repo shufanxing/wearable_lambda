@@ -19,18 +19,18 @@ public class StepCountDAOImpl {
 	private static Logger logger = Logger.getLogger(StepCountDAOImpl.class);
 	
 
-	private static Connection getConnection() throws SQLException, ClassNotFoundException {
-		Class.forName("org.postgresql.Driver");
-		return DriverManager.getConnection(
-				"jdbc:postgresql://wdpostgredb.cm4pdwx2jgw0.us-west-2.rds.amazonaws.com:5432/root", 
-				"root", 
-				"12345678");
-	}
-		
+//	private static Connection getConnection() throws SQLException, ClassNotFoundException {
+//		Class.forName("org.postgresql.Driver");
+//		return DriverManager.getConnection(
+//				"jdbc:postgresql://wdpostgredb.cm4pdwx2jgw0.us-west-2.rds.amazonaws.com:5432/root", 
+//				"root", 
+//				"12345678");
+//	}
+//		
 	
-	public static Response postStepCount(StepCount stepCount)  {
+	public static Response postStepCount(Connection conn, StepCount stepCount)  {
 		
-		Connection conn = null;
+//		Connection conn = null;
 		PreparedStatement ps = null;
 		StatusMessage statusMessage = null;
 
@@ -38,9 +38,9 @@ public class StepCountDAOImpl {
 
 		try {
 			
-			if(conn==null) {
-				conn = getConnection();
-			}
+//			if(conn==null) {
+//				conn = getConnection();
+//			}
 
 			ps = conn.prepareStatement(sql);
 			ps.setInt(1, stepCount.getUserId());
@@ -60,8 +60,8 @@ public class StepCountDAOImpl {
 			
 			ps.close();
 			ps = null;
-			conn.close(); // Return to connection pool
-			conn = null; // Make sure we don't close it twice
+//			conn.close(); // Return to connection pool
+//			conn = null; // Make sure we don't close it twice
 		} catch (Exception e) {
 			e.printStackTrace();
 		} finally {
@@ -74,20 +74,20 @@ public class StepCountDAOImpl {
 					e.printStackTrace();
 				}
 			}
-			if (conn != null) {
-				try {
-					conn.close();
-				} catch (SQLException e) {
-					logger.error("Error closing connection: " + e.getMessage());
-					e.printStackTrace();
-				}
-			}
+//			if (conn != null) {
+//				try {
+//					conn.close();
+//				} catch (SQLException e) {
+//					logger.error("Error closing connection: " + e.getMessage());
+//					e.printStackTrace();
+//				}
+//			}
 		}
 		return Response.status(200).entity(stepCount).build();
 	}
 
-	public static Response getCurrent(int userId)  {
-		Connection conn = null;
+	public static Response getCurrent(Connection conn, int userId)  {
+//		Connection conn = null;
 		PreparedStatement ps = null;
 		ResultSet rs = null;
 		PreparedStatement ps2 = null;
@@ -101,9 +101,9 @@ public class StepCountDAOImpl {
 
 		try {
 			
-			if(conn==null) {
-				conn = getConnection();
-			}
+//			if(conn==null) {
+//				conn = getConnection();
+//			}
 			
 			ps = conn.prepareStatement(sql);
 			ps.setInt(1, userId);
@@ -146,8 +146,8 @@ public class StepCountDAOImpl {
 			ps2.close();
 			ps2 = null;
 
-			conn.close(); // Return to connection pool
-			conn = null; // Make sure we don't close it twice
+//			conn.close(); // Return to connection pool
+//			conn = null; // Make sure we don't close it twice
 
 		} catch (Exception e) {
 			logger.error("Error: " + e.getMessage());
@@ -187,22 +187,22 @@ public class StepCountDAOImpl {
 				}
 			}
 
-			if (conn != null) {
-				try {
-					conn.close();
-				} catch (SQLException e) {
-					logger.error("Error closing connection: " + e.getMessage());
-					e.printStackTrace();
-				}
-			}
+//			if (conn != null) {
+//				try {
+//					conn.close();
+//				} catch (SQLException e) {
+//					logger.error("Error closing connection: " + e.getMessage());
+//					e.printStackTrace();
+//				}
+//			}
 		}
 
 		return Response.status(200).entity(sum).build();
 	}
 
 
-	public static Response getSingle(int userId, int day) {
-		Connection conn = null;
+	public static Response getSingle(Connection conn, int userId, int day) {
+//		Connection conn = null;
 		PreparedStatement ps = null;
 		ResultSet rs = null;
 
@@ -212,9 +212,9 @@ public class StepCountDAOImpl {
 
 		try {
 			
-			if(conn==null) {
-				conn = getConnection();
-			}
+//			if(conn==null) {
+//				conn = getConnection();
+//			}
 
 			ps = conn.prepareStatement(sql);
 			ps.setInt(1, userId);
@@ -236,8 +236,8 @@ public class StepCountDAOImpl {
 			rs = null;
 			ps.close();
 			ps = null;
-			conn.close(); // Return to connection pool
-			conn = null; // Make sure we don't close it twice
+//			conn.close(); // Return to connection pool
+//			conn = null; // Make sure we don't close it twice
 
 		} catch (Exception e) {
 			logger.error("Error: " + e.getMessage());
@@ -259,20 +259,20 @@ public class StepCountDAOImpl {
 					e.printStackTrace();
 				}
 			}
-			if (conn != null) {
-				try {
-					conn.close();
-				} catch (SQLException e) {
-					logger.error("Error closing connection: " + e.getMessage());
-					e.printStackTrace();
-				}
-			}
+//			if (conn != null) {
+//				try {
+//					conn.close();
+//				} catch (SQLException e) {
+//					logger.error("Error closing connection: " + e.getMessage());
+//					e.printStackTrace();
+//				}
+//			}
 		}
 		return Response.status(200).entity(sum).build();
 	}
 
-	public static Response getRange(int userId, int startDay, int numDays) {
-		Connection conn = null;
+	public static Response getRange(Connection conn, int userId, int startDay, int numDays) {
+//		Connection conn = null;
 		PreparedStatement ps = null;
 		ResultSet rs = null;
 
@@ -282,9 +282,9 @@ public class StepCountDAOImpl {
 
 		try {
 			
-			if(conn==null) {
-				conn = getConnection();
-			}
+//			if(conn==null) {
+//				conn = getConnection();
+//			}
 
 			ps = conn.prepareStatement(sql);
 			ps.setInt(1, userId);
@@ -309,8 +309,8 @@ public class StepCountDAOImpl {
 			rs = null;
 			ps.close();
 			ps = null;
-			conn.close(); // Return to connection pool
-			conn = null; // Make sure we don't close it twice
+//			conn.close(); // Return to connection pool
+//			conn = null; // Make sure we don't close it twice
 		} catch (Exception  e) {
 			logger.error("Error: " + e.getMessage());
 			e.printStackTrace();
@@ -331,20 +331,20 @@ public class StepCountDAOImpl {
 					e.printStackTrace();
 				}
 			}
-			if (conn != null) {
-				try {
-					conn.close();
-				} catch (SQLException e) {
-					logger.error("Error closing connection: " + e.getMessage());
-					e.printStackTrace();
-				}
-			}
+//			if (conn != null) {
+//				try {
+//					conn.close();
+//				} catch (SQLException e) {
+//					logger.error("Error closing connection: " + e.getMessage());
+//					e.printStackTrace();
+//				}
+//			}
 		}
 		return Response.status(200).entity(sum).build();
 	}
 
-	public static Response deleteAll() {
-		Connection conn = null;
+	public static Response deleteAll(Connection conn) {
+//		Connection conn = null;
 		PreparedStatement ps = null;
 
 		Integer deleted = -1;
@@ -353,9 +353,9 @@ public class StepCountDAOImpl {
 
 		try {
 			
-			if(conn==null) {
-				conn = getConnection();
-			}
+//			if(conn==null) {
+//				conn = getConnection();
+//			}
 
 			ps = conn.prepareStatement(sql);
 
@@ -363,12 +363,13 @@ public class StepCountDAOImpl {
 
 			ps.close();
 			ps = null;
-			conn.close(); // Return to connection pool
-			conn = null; // Make sure we don't close it twice
+//			conn.close(); // Return to connection pool
+//			conn = null; // Make sure we don't close it twice
 
 		} catch (Exception  e) {
 			logger.error("Error: " + e.getMessage());
 			e.printStackTrace();
+			return Response.status(404).entity(e.getMessage()).build();
 		} finally {
 
 			if (ps != null) {
@@ -379,15 +380,16 @@ public class StepCountDAOImpl {
 					e.printStackTrace();
 				}
 			}
-			if (conn != null) {
-				try {
-					conn.close();
-				} catch (SQLException e) {
-					logger.error("Error closing connection: " + e.getMessage());
-					e.printStackTrace();
-				}
-			}
+//			if (conn != null) {
+//				try {
+//					conn.close();
+//				} catch (SQLException e) {
+//					logger.error("Error closing connection: " + e.getMessage());
+//					e.printStackTrace();
+//				}
+//			}
 		}
+		System.out.println("resp:" + deleted);
 		return Response.status(200).entity(deleted).build();
 	}
 
